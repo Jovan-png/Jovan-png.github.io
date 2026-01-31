@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>A Question for You...</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #222;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #game-screen {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 4/3;
+            background-color: #f0f0f0;
+            background-image: url(background.gif);
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        @media (max-width: 600px) {
+            #game-screen { width: 95vw; height: 70vh; aspect-ratio: auto; }
+        }
+
+        #character {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: auto;
+            height: 85%;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        #dialogue-box {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            height: 25%;
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid green;
+            border-radius: 15px;
+            padding: 15px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        #name-tag {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: green;
+            margin-bottom: 5px;
+        }
+
+        #text-content { font-size: 1rem; line-height: 1.4; }
+
+        #next-arrow {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            color: green;
+            animation: bounce 1s infinite;
+            font-size: 1.5rem;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        #choices-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            display: none; 
+            width: 80%;
+            z-index: 20;
+        }
+
+        .choice-btn {
+            background: white;
+            border: 3px solid green;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            touch-action: manipulation;
+            transition: transform 0.1s;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" loop>
+        <source src="Helpless from HAMILTON.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="blip-sound">
+        <source src="https://actions.google.com/sounds/v1/cartoon/pop.ogg" type="audio/ogg">
+    </audio>
+
+    <div id="game-screen">
+        <img id="character" src="https://placehold.co/400x600/orange/white?text=Character+Sprite" alt="Character">
+
+        <div id="dialogue-box" onclick="advanceDialogue()">
+            <div id="name-tag">Jovan</div>
+            <div id="text-content"></div>
+            <div id="next-arrow">▼</div>
+        </div>
+
+        <div id="choices-container"></div>
+    </div>
+
+    <script>
+        // image tingz
+        const images = {
+            "happy": "Untitled-3.gif", 
+            "shy": "https://placehold.co/400x600/blue/white?text=Shy",
+            "nervous": "https://placehold.co/400x600/purple/white?text=Nervous",
+            "ask": "https://placehold.co/400x600/pink/white?text=The+Question",
+            "success": "https://placehold.co/400x600/gold/white?text=YAY!!!"
+        };
+
+        // story tingz
+      const story = {
+    "start": {
+        text: "Hey, Anaise! I'm glad you're here!",
+        expression: "happy",
+        next: "intro_2"
+    },
+    "intro_2": {
+        text: "Let's play a game. A question game... you ready?",
+        expression: "shy",
+        choices: [
+            { text: "Of course!", next: "intro_yes" },
+            { text: "Depends on the questions...", next: "intro_maybe" }
+        ]
+    },
+    //  BRANCHING REACTIONS FOR INTRO 
+    "intro_yes": {
+        text: "Good!.",
+        expression: "happy",
+        next: "q1"
+    },
+    "intro_maybe": {
+        text: "It wont be anything crazy i promise",
+        expression: "happy",
+        next: "q1"
+    },
+
+    //  QUESTION 1 (LILO & STITCH / ADVENTURE TIME) 
+    "q1": {
+        text: "If we were in an anime would we be the main characters or the side character?",
+        expression: "happy",
+        choices: [
+            { text: " Main Characters", next: "q1_main" },
+            { text: "The side characters", next: "q1_side" }
+        ]
+    },
+    "q1_main": {
+        text: "That's what i like to hear!",
+        expression: "success",
+        next: "q2"
+    },
+    "q1_side": {
+        text: "uhhh idk if im ready to just be a side character",
+        expression: "happy",
+        next: "q2"
+    },
+
+    //  QUESTION 2 (SPIRITUAL / MANIFESTING) 
+    "q2": {
+        text: "Do you think the universe aligned for us to meet, or are we just lucky?",
+        expression: "shy",
+        choices: [
+            { text: "The universe ✨", next: "q2_stars" },
+            { text: "We just have great timing.", next: "q2_timing" }
+        ]
+    },
+    "q2_stars": {
+        text: "I agree I couldn't see my life with anyone else!",
+        expression: "happy",
+        next: "q3"
+    },
+    "q2_timing": {
+        text: "Timing is everything! I'm just glad the luck was on our side!",
+        expression: "happy",
+        next: "q3"
+    },
+
+    //  QUESTION 3 (BETTY BOOP / VINTAGE) 
+    "q3": {
+        text: "If we could hop into a Betty Boop cartoon, are we going to a 1930s Jazz Club or a tropical island adventure?",
+        expression: "happy",
+        choices: [
+            { text: "Jazz Club (Classy)", next: "q3_jazz" },
+            { text: "Tropical Island (Wild)", next: "q3_island" }
+        ]
+    },
+    "q3_jazz": {
+        text: "Boop-oop-a-doop! I'll get my best suit ready. You'll look iconic.",
+        expression: "success",
+        next: "q4"
+    },
+
+    "q3_island": {
+        text: "Lilo & Stitch vibes meet Betty Boop. That sounds like a chaotic masterpiece.",
+        expression: "happy",
+        next: "q4"
+    },
+
+    //  QUESTION 4 (HAMILTON) 
+    "q4": {
+        text: "Final prep... If I told you 'I am not throwing away my shot' to make this Valentine's perfect, would you believe me?",
+        expression: "nervous",
+        choices: [
+            { text: "I'll believe it when I see it!", next: "q4_see" },
+            { text: "I never doubted you.", next: "q4_trust" }
+        ]
+    },
+    "q4_see": {
+        text: "Challenge accepted! I'm about to go full Alexander Hamilton on these plans.",
+        expression: "happy",
+        next: "the_question"
+    },
+    "q4_trust": {
+        text: "That means a lot. I promise to keep you satisfied with the plan.",
+        expression: "shy",
+        next: "the_question"
+    },
+
+    //  THE FINAL QUESTION 
+    "the_question": {
+        text: "Will you be my Valentine, Anaise?",
+        expression: "ask",
+        choices: [
+            { text: "Yes! I'd love to!", next: "path_yes" },
+            { text: "Maybe... tell me more?", next: "path_maybe" },
+            { text: "No thanks", next: "path_no", isRigged: true }
+        ]
+    },
+    "path_yes": {
+        text: "Wait, really?! You just made me the happiest person ever! ❤️",
+        expression: "success",
+        next: "path_yes_2"
+    },
+    "path_yes_2": {
+        text: "I already have a whole day planned. It's going to be legendary!",
+        expression: "happy",
+        next: null 
+    },
+    "path_maybe": {
+        text: "Well, the stars say it's a good idea, and Stitch says 'Ohana means you don't say no to dates' (I think).",
+        expression: "shy",
+        next: "the_question" 
+    },
+    "path_no": {
+        text: "My heart.exe has stopped working. Please restart the universe.",
+        expression: "nervous",
+        next: null
+    }
+};
+
+        //  3. ENGINE LOGIC 
+        let currentNode = "start";
+        let isTyping = false;
+        let typeTimer;Helpless from HAMILTON.mp3  Untitled-3.gif              background.gif              index.html                  saito-ryou-9.jpg  
+        let musicStarted = false;
+
+        const textElement = document.getElementById('text-content');
+        const charElement = document.getElementById('character');
+        const boxElement = document.getElementById('dialogue-box');
+        const choicesElement = document.getElementById('choices-container');
+        const bgMusic = document.getElementById('bg-music');
+        const blipSound = document.getElementById('blip-sound');
+        const stitchSoundHi = document.getElementById('stitchSound')
+        const stitchSound = document.getElementById('stitchSound')
+
+
+        function showNode(nodeId) {
+            if (!nodeId) return;
+            currentNode = nodeId;
+            const node = story[nodeId];
+            
+            if (images[node.expression]) {
+                charElement.src = images[node.expression];
+            }
+
+            typeText(node.text, () => {
+                if (node.choices) {
+                    renderChoices(node.choices);
+                }
+            });
+        }
+
+        function renderChoices(choices) {
+            choicesElement.innerHTML = ""; 
+            choicesElement.style.display = 'flex';
+            boxElement.style.display = 'none';
+
+            choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.className = "choice-btn";
+                btn.innerHTML = choice.text;
+                
+                if (choice.isRigged) {
+                    btn.id = "no-btn";
+                    btn.onmouseover = runAway;
+                    btn.ontouchstart = runAway;
+                }
+
+                btn.onclick = (e) => {
+                    e.stopPropagation(); // Prevent firing dialogue advance
+                    choicesElement.style.display = 'none';
+                    boxElement.style.display = 'flex';
+                    showNode(choice.next);
+                };
+                choicesElement.appendChild(btn);
+            });
+        }
+
+        function typeText(text, callback) {
+            isTyping = true;
+            textElement.innerHTML = "";
+            let i = 0;
+            clearInterval(typeTimer);
+            
+            typeTimer = setInterval(() => {
+                textElement.innerHTML += text.charAt(i);
+                // Play subtle blip sound every few characters for flavor
+                if (i % 3 === 0) blipSound.cloneNode(true).play(); 
+                
+                i++;
+                if (i >= text.length + 75) {
+                    clearInterval(typeTimer);
+                    isTyping = false;
+                    if(callback) callback();
+                }
+            }, 40);
+        }
+
+        function advanceDialogue() {
+            // Start music on first interaction
+            if (!musicStarted) {
+                bgMusic.play();
+                musicStarted = true;
+            }
+
+            if (isTyping) {
+                clearInterval(typeTimer);
+                textElement.innerHTML = story[currentNode].text;
+                isTyping = false;
+                if (story[currentNode].choices) renderChoices(story[currentNode].choices);
+                return;
+            }
+
+            if (story[currentNode].next && !story[currentNode].choices) {
+                showNode(story[currentNode].next);
+            }
+        }
+
+        function runAway() {
+            const noBtn = document.getElementById('no-btn');
+            const maxMove = 100;
+            const x = (Math.random() * maxMove * 2) - maxMove;
+            const y = (Math.random() * maxMove * 2) - maxMove;
+            noBtn.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+    function playSound(){
+
+    }
+        // Start the game
+        showNode("start");
+    </script>
+</body>
+</html>
