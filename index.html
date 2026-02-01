@@ -149,11 +149,8 @@
             "please": "Please.gif",
             "smiling": "Smiling.gif",
             "stitch": "Stitch.gif",
-            "Yay": "Yay.gif", 
-            "nervous": "Nervous.gif",
-            "shy": "https://placehold.co/400x600/blue/white?text=Shy",
-            "ask": "https://placehold.co/400x600/pink/white?text=The+Question",
-            "success": "https://placehold.co/400x600/gold/white?text=YAY!!!"
+            "yay": "Yay.gif", 
+            "nervous": "Nervous.gif"
         };
 
         // story tingz
@@ -177,7 +174,7 @@
         next: "q1"
     },
     "intro_maybe": {
-        text: "It wont be anything crazy i promise",
+        text: "It wont be anything crazy I promise",
         expression: "smiling",
         next: "q1"
     },
@@ -260,7 +257,7 @@
         next: "the_question"
     },
      "q4_no": {
-        text: "That's...Crazy",
+        text: "That's...Crazy...",
         expression: "nervous",
         next: "the_question"
     },
@@ -275,12 +272,12 @@
         ]
     },
     "path_yes": {
-        text: "Wait, really?! You just made me the happiest person ever! ❤️",
+        text: "Really? I'm so excited! ❤️",
         expression: "yay",
         next: "path_yes_2"
     },
     "path_yes_2": {
-        text: "I already have a whole day planned. It's going to be legendary!",
+        text: "I already have a whole day planned. I can't wait to spend it with you!   *Please actually tell me the answer i can't see what you selected lol*",
         expression: "yay",
         next: null 
     },
@@ -290,7 +287,7 @@
         next: "the_question" 
     },
     "path_no": {
-        text: "My heart.exe has stopped working. Please restart the universe.",
+        text: "Sheesh that's harsh lmao",
         expression: "nervous",
         next: null
     }
@@ -321,12 +318,11 @@
             }
 
             if(nodeId === "q3" ){
-                name = "stitch"
                 stitchSound.play()
             }
-               if(nodeId == "q3_1" || "q3_2" ){
-                name = "stitch"
-                stitchSoundHi.play()
+
+               if(nodeId === "q3_1" || nodeId === "q3_2" ){
+                stitchSoundHi.play();
             }
             typeText(node.text, () => {
                 if (node.choices) {
@@ -371,7 +367,7 @@
                 textElement.innerHTML += text.charAt(i);
               if (i % 3 === 0) {
                     const beep = blipSound.cloneNode(true);
-                    beep.volume = 0.07; 
+                    beep.volume = 0.06; 
                     beep.play(); 
                 }
                 i++;
@@ -386,7 +382,7 @@
         function advanceDialogue() {
             // Start music on first interaction
             if (!musicStarted) {
-                bgMusic.volume = 0.07;
+                bgMusic.volume = 0.06;
                 bgMusic.play();
                 musicStarted = true;
             }
