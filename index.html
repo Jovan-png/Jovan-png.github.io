@@ -325,7 +325,7 @@
                 name = "stitch"
                 stitchSound.play()
             }
-               if(nodeId === "q3_1" || "q3_2" ){
+               if(nodeId == "q3_1" || "q3_2" ){
                 name = "stitch"
                 stitchSoundHi.play()
             }
@@ -372,7 +372,7 @@
                 textElement.innerHTML += text.charAt(i);
               if (i % 3 === 0) {
                     const beep = blipSound.cloneNode(true);
-                    beep.volume = 0.20; 
+                    beep.volume = 0.10; 
                     beep.play(); 
                 }
                 i++;
@@ -387,7 +387,7 @@
         function advanceDialogue() {
             // Start music on first interaction
             if (!musicStarted) {
-                bgMusic.volume = 0.20;
+                bgMusic.volume = 0.10;
                 bgMusic.play();
                 musicStarted = true;
             }
