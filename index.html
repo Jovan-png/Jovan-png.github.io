@@ -171,7 +171,6 @@
             { text: "Depends on the questions...", next: "intro_maybe" }
         ]
     },
-    //  BRANCHING REACTIONS FOR INTRO 
     "intro_yes": {
         text: "Good!.",
         expression: "smiling",
@@ -183,7 +182,6 @@
         next: "q1"
     },
 
-    //  QUESTION 1 (LILO & STITCH / ADVENTURE TIME) 
     "q1": {
         text: "If we were in an anime would we be the main characters or the side character?",
         expression: "normal",
@@ -203,7 +201,6 @@
         next: "q2"
     },
 
-    //  QUESTION 2 (SPIRITUAL / MANIFESTING) 
     "q2": {
         text: "Do you think the universe aligned for us to meet, or are we just lucky?",
         expression: "nervous",
@@ -223,7 +220,6 @@
         next: "q3"
     },
 
-    //  QUESTION 3 (BETTY BOOP / VINTAGE) 
     "q3": {
         text: "*Weird Noises*",
         expression: "nervous",
@@ -244,27 +240,31 @@
         next: "q4"
     },
 
-    //  QUESTION 4 (HAMILTON) 
-    "q4": {
-        text: "Final prep... If I told you 'I am not throwing away my shot' to make this Valentine's perfect, would you believe me?",
-        expression: "smiling",
+"q4": {
+        text: "Out of all the places in the world, there's nowhere I'd rather be than right here with you. Do you feel it too?",
+        expression: "smiling", 
         choices: [
-            { text: "I'll believe it when I see it!", next: "q4_see" },
-            { text: "I never doubted you.", next: "q4_trust" }
+            { text: "I feel it too. ❤️", next: "q4_feel" },
+            { text: "Always. You're my favorite.", next: "q4_fav" },
+            { text: "Hell Naww", next: "q4_no" }
         ]
     },
-    "q4_see": {
-        text: "Challenge accepted! I'm about to go full Alexander Hamilton on these plans.",
-        expression: "normal",
+    "q4_feel": {
+        text: "That makes me so happy to hear. You're really special to me, Anaise.",
+        expression: "smiling",
         next: "the_question"
     },
-    "q4_trust": {
-        text: "That means a lot. I promise to keep you satisfied with the plan.",
-        expression: "normal",
+    "q4_fav": {
+        text: "And you're mine. No competition.",
+        expression: "smiling",
+        next: "the_question"
+    },
+     "q4_no": {
+        text: "That's...Crazy",
+        expression: "nervous",
         next: "the_question"
     },
 
-    //  THE FINAL QUESTION 
     "the_question": {
         text: "Will you be my Valentine, Anaise?",
         expression: "please",
@@ -296,7 +296,6 @@
     }
 };
 
-        //  3. ENGINE LOGIC 
         let currentNode = "start";
         let isTyping = false;
         let typeTimer;
@@ -372,7 +371,7 @@
                 textElement.innerHTML += text.charAt(i);
               if (i % 3 === 0) {
                     const beep = blipSound.cloneNode(true);
-                    beep.volume = 0.10; 
+                    beep.volume = 0.07; 
                     beep.play(); 
                 }
                 i++;
@@ -387,7 +386,7 @@
         function advanceDialogue() {
             // Start music on first interaction
             if (!musicStarted) {
-                bgMusic.volume = 0.10;
+                bgMusic.volume = 0.07;
                 bgMusic.play();
                 musicStarted = true;
             }
