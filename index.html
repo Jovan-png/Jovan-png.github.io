@@ -1,5 +1,4 @@
-
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -52,7 +51,7 @@
             bottom: 15px;
             left: 15px;
             right: 15px;
-            height: 25%;
+            height: 15%;
             background: rgba(0, 0, 0, 0.85);
             border: 2px solid green;
             border-radius: 15px;
@@ -89,7 +88,8 @@
 
         #choices-container {
             position: absolute;
-            top: 50%;
+            /* CHANGED: Moved up to 40% so it doesn't overlap the text box */
+            top: 40%; 
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
@@ -123,6 +123,12 @@
     <audio id="blip-sound">
         <source src="https://actions.google.com/sounds/v1/cartoon/pop.ogg" type="audio/ogg">
     </audio>
+      <audio id="stitchSound">
+        <source src="stichaudio.mp3" type="audio/ogg">
+    </audio>
+          <audio id="stitchSoundHi">
+        <source src="StitchHi.mp3" type="audio/ogg">
+    </audio>
 
     <div id="game-screen">
         <img id="character" src="https://placehold.co/400x600/orange/white?text=Character+Sprite" alt="Character">
@@ -139,9 +145,13 @@
     <script>
         // image tingz
         const images = {
-            "happy": "Untitled-3.gif", 
+            "normal": "Normal.gif",
+            "please": "Please.gif",
+            "smiling": "Smiling.gif",
+            "stitch": "Stitch.gif",
+            "Yay": "Yay.gif", 
+            "nervous": "Nervous.gif",
             "shy": "https://placehold.co/400x600/blue/white?text=Shy",
-            "nervous": "https://placehold.co/400x600/purple/white?text=Nervous",
             "ask": "https://placehold.co/400x600/pink/white?text=The+Question",
             "success": "https://placehold.co/400x600/gold/white?text=YAY!!!"
         };
@@ -150,12 +160,12 @@
       const story = {
     "start": {
         text: "Hey, Anaise! I'm glad you're here!",
-        expression: "happy",
+        expression: "normal",
         next: "intro_2"
     },
     "intro_2": {
         text: "Let's play a game. A question game... you ready?",
-        expression: "shy",
+        expression: "nervous",
         choices: [
             { text: "Of course!", next: "intro_yes" },
             { text: "Depends on the questions...", next: "intro_maybe" }
@@ -164,19 +174,19 @@
     //  BRANCHING REACTIONS FOR INTRO 
     "intro_yes": {
         text: "Good!.",
-        expression: "happy",
+        expression: "smiling",
         next: "q1"
     },
     "intro_maybe": {
         text: "It wont be anything crazy i promise",
-        expression: "happy",
+        expression: "smiling",
         next: "q1"
     },
 
     //  QUESTION 1 (LILO & STITCH / ADVENTURE TIME) 
     "q1": {
         text: "If we were in an anime would we be the main characters or the side character?",
-        expression: "happy",
+        expression: "normal",
         choices: [
             { text: " Main Characters", next: "q1_main" },
             { text: "The side characters", next: "q1_side" }
@@ -184,19 +194,19 @@
     },
     "q1_main": {
         text: "That's what i like to hear!",
-        expression: "success",
+        expression: "smiling",
         next: "q2"
     },
     "q1_side": {
         text: "uhhh idk if im ready to just be a side character",
-        expression: "happy",
+        expression: "smiling",
         next: "q2"
     },
 
     //  QUESTION 2 (SPIRITUAL / MANIFESTING) 
     "q2": {
         text: "Do you think the universe aligned for us to meet, or are we just lucky?",
-        expression: "shy",
+        expression: "nervous",
         choices: [
             { text: "The universe ✨", next: "q2_stars" },
             { text: "We just have great timing.", next: "q2_timing" }
@@ -204,40 +214,40 @@
     },
     "q2_stars": {
         text: "I agree I couldn't see my life with anyone else!",
-        expression: "happy",
+        expression: "smiling",
         next: "q3"
     },
     "q2_timing": {
         text: "Timing is everything! I'm just glad the luck was on our side!",
-        expression: "happy",
+        expression: "smiling",
         next: "q3"
     },
 
     //  QUESTION 3 (BETTY BOOP / VINTAGE) 
     "q3": {
-        text: "If we could hop into a Betty Boop cartoon, are we going to a 1930s Jazz Club or a tropical island adventure?",
-        expression: "happy",
+        text: "*Weird Noises*",
+        expression: "nervous",
         choices: [
-            { text: "Jazz Club (Classy)", next: "q3_jazz" },
-            { text: "Tropical Island (Wild)", next: "q3_island" }
+            { text: "What's That?", next: "q3_1" },
+            { text: "That's a strange noise.", next: "q3_2" }
         ]
     },
-    "q3_jazz": {
-        text: "Boop-oop-a-doop! I'll get my best suit ready. You'll look iconic.",
-        expression: "success",
+    "q3_1": {
+        text: "Oh that's just my dog, I found him in the garbage.",
+        expression: "stitch",
         next: "q4"
     },
 
-    "q3_island": {
-        text: "Lilo & Stitch vibes meet Betty Boop. That sounds like a chaotic masterpiece.",
-        expression: "happy",
+    "q3_2": {
+        text: "Yea he does that sometimes he's my best boy.",
+        expression: "stitch",
         next: "q4"
     },
 
     //  QUESTION 4 (HAMILTON) 
     "q4": {
         text: "Final prep... If I told you 'I am not throwing away my shot' to make this Valentine's perfect, would you believe me?",
-        expression: "nervous",
+        expression: "smiling",
         choices: [
             { text: "I'll believe it when I see it!", next: "q4_see" },
             { text: "I never doubted you.", next: "q4_trust" }
@@ -245,19 +255,19 @@
     },
     "q4_see": {
         text: "Challenge accepted! I'm about to go full Alexander Hamilton on these plans.",
-        expression: "happy",
+        expression: "normal",
         next: "the_question"
     },
     "q4_trust": {
         text: "That means a lot. I promise to keep you satisfied with the plan.",
-        expression: "shy",
+        expression: "normal",
         next: "the_question"
     },
 
     //  THE FINAL QUESTION 
     "the_question": {
         text: "Will you be my Valentine, Anaise?",
-        expression: "ask",
+        expression: "please",
         choices: [
             { text: "Yes! I'd love to!", next: "path_yes" },
             { text: "Maybe... tell me more?", next: "path_maybe" },
@@ -266,17 +276,17 @@
     },
     "path_yes": {
         text: "Wait, really?! You just made me the happiest person ever! ❤️",
-        expression: "success",
+        expression: "yay",
         next: "path_yes_2"
     },
     "path_yes_2": {
         text: "I already have a whole day planned. It's going to be legendary!",
-        expression: "happy",
+        expression: "yay",
         next: null 
     },
     "path_maybe": {
         text: "Well, the stars say it's a good idea, and Stitch says 'Ohana means you don't say no to dates' (I think).",
-        expression: "shy",
+        expression: "nervous",
         next: "the_question" 
     },
     "path_no": {
@@ -298,8 +308,8 @@
         const choicesElement = document.getElementById('choices-container');
         const bgMusic = document.getElementById('bg-music');
         const blipSound = document.getElementById('blip-sound');
-        const stitchSoundHi = document.getElementById('stitchSound')
         const stitchSound = document.getElementById('stitchSound')
+        const stitchSoundHi = document.getElementById('stitchSoundHi')
 
 
         function showNode(nodeId) {
@@ -311,6 +321,14 @@
                 charElement.src = images[node.expression];
             }
 
+            if(nodeId === "q3" ){
+                name = "stitch"
+                stitchSound.play()
+            }
+               if(nodeId === "q3_1" || "q3_2" ){
+                name = "stitch"
+                stitchSoundHi.play()
+            }
             typeText(node.text, () => {
                 if (node.choices) {
                     renderChoices(node.choices);
@@ -321,8 +339,8 @@
         function renderChoices(choices) {
             choicesElement.innerHTML = ""; 
             choicesElement.style.display = 'flex';
-            boxElement.style.display = 'none';
-
+            // CHANGED: Removed the line that hides the box, so it stays visible
+            
             choices.forEach(choice => {
                 const btn = document.createElement('button');
                 btn.className = "choice-btn";
@@ -337,7 +355,7 @@
                 btn.onclick = (e) => {
                     e.stopPropagation(); // Prevent firing dialogue advance
                     choicesElement.style.display = 'none';
-                    boxElement.style.display = 'flex';
+                    // CHANGED: No need to show box since it never hid
                     showNode(choice.next);
                 };
                 choicesElement.appendChild(btn);
@@ -352,11 +370,13 @@
             
             typeTimer = setInterval(() => {
                 textElement.innerHTML += text.charAt(i);
-                // Play subtle blip sound every few characters for flavor
-                if (i % 3 === 0) blipSound.cloneNode(true).play(); 
-                
+              if (i % 3 === 0) {
+                    const beep = blipSound.cloneNode(true);
+                    beep.volume = 0.20; 
+                    beep.play(); 
+                }
                 i++;
-                if (i >= text.length + 75) {
+                if (i >= text.length) {
                     clearInterval(typeTimer);
                     isTyping = false;
                     if(callback) callback();
@@ -367,6 +387,7 @@
         function advanceDialogue() {
             // Start music on first interaction
             if (!musicStarted) {
+                bgMusic.volume = 0.20;
                 bgMusic.play();
                 musicStarted = true;
             }
